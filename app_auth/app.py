@@ -1,7 +1,8 @@
 from flask import Flask, jsonify
-import os
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 @app.route('/health')
 def health():

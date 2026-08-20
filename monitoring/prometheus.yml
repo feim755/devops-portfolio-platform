@@ -2,10 +2,6 @@ global:
   scrape_interval: 15s
 
 scrape_configs:
-  - job_name: 'nginx-gateway'
-    static_configs:
-      - targets: ['nginx-gateway:80']
-
   - job_name: 'auth-service'
     static_configs:
       - targets: ['auth-service:5000']

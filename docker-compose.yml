@@ -3,6 +3,8 @@ services:
     build: ./app_auth
     container_name: auth-service
     restart: always
+    ports:
+      - "5002:5000"
     networks:
       - app-network
 
@@ -10,6 +12,8 @@ services:
     build: ./app_data
     container_name: data-service
     restart: always
+    ports:
+      - "5001:5001"
     environment:
       - DB_HOST=postgres-db
       - DB_USER=devops_user
