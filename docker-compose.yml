@@ -1,0 +1,65 @@
+services:
+  app_auth:
+    build: ./app_auth
+    container_name: auth-service
+    restart: always
+    networks:
+      - app-network
+
+  app_data:
+    build: ./app_data
+    container_name: data-service
+    restart: always
+    environment:
+      - DB_HOST=postgres-db
+      - DB_USER=devops_user
+      - DB_PASSWORD=secretpassword
+    depends_on:
+      - postgres-db
+    networks:
+      - app-network
+
+  postgres-db:
+    image: postgres:15-alpine
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_USER: devops_user
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: devops_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  nginx-gateway:
+    image: nginx:alpine
+    container_name: nginx-gateway
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app_auth
+      - app_data
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
