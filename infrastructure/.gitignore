@@ -1,0 +1,3 @@
+*.pyc
+venv/
+minikube-darwin-arm64
